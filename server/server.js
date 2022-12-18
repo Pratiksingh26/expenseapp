@@ -1,19 +1,31 @@
 import express from "express"
-import mongoose from "mongoose"
+import connect from "./database/mongodb.js"
 import cors from "cors"
+import bodyParser from "body-parser"
+import Transaction from "./models/transaction.js"
+import TransactionRouters from "./routes/transactions.js"
+import Auth from "./routes/Auth.js"
+
 
 const PORT = 4000
 const app = express()
 
-app.use(cors)
+app.use(cors())
+app.use(bodyParser.json())
 
-mongoose.connect("mongodb+srv://pratik:pratik123@expense-app.4yslzic.mongodb.net/?retryWrites=true&w=majority")
-.then(()=> console.log("MongoDB connection is succesfull")).catch((err) => console.error(err))
+
+
 
 app.get("/", (req,res) => {
     res.send("Hello world!")
-})
+});
+
+await connect();
+
+app.use("/transaction", TransactionRouters)
+app.use("/auth", Auth)
+
 
 app.listen(PORT, ()=> {
-    console.log("Server is runnung on http://localhost:4000")
+    console.log("Server is running on http://localhost:4000")
 })
